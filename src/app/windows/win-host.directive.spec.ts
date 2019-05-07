@@ -1,8 +1,8 @@
-import { WinHostDirective } from './win-host.directive';
+import { WinHost } from './win-host.directive';
 
-describe('WinHostDirective', () => {
+describe('WinHost', () => {
   it('should create an instance', () => {
-    const directive = new WinHostDirective();
+    const directive = new WinHost(undefined);
     expect(directive).toBeTruthy();
   });
 });

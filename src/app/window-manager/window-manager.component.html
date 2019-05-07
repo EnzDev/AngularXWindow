@@ -1,3 +1,9 @@
-<div *ngFor="let window of windows">
-  <ng-template win-host [id]="window.id"></ng-template>
-</div>
+<ng-container *ngFor="let window of windows">
+  <div
+    class="window"
+    [style.left]="window.position ? window.position.left.get() : 0"
+    [style.top]="window.position ? window.position.top.get() : 0"
+    [style.z-index]="window.layer">
+    <ng-container win-host [id]="window.id"></ng-container>
+  </div>
+</ng-container>
