@@ -1,6 +1,13 @@
 <ng-container *ngFor="let window of windows">
   <div
-    class="window"
+    class="window" draggable="true"
+    (dragstart)="startDrag($event, window)"
+    (dragover)="onDragOver($event, window)"
+    (drop)="onDragDrop($event, window)"
+
+    (click)="switch(window)"
+
+    [style.visibility]="window.reduced ? 'hidden' : 'unset'"
     [style.left]="window.position ? window.position.left.get() : 0"
     [style.top]="window.position ? window.position.top.get() : 0"
     [style.z-index]="window.layer">
