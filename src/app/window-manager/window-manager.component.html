@@ -11,6 +11,12 @@
     [style.left]="window.position ? window.position.left.get() : 0"
     [style.top]="window.position ? window.position.top.get() : 0"
     [style.z-index]="window.layer">
+    <div class="windowBar" *ngIf="window.window && !window.window.instance.forcedLayer">
+      <span>{{ "Title" }}</span>
+      <span class="separator"></span>
+      <span class="action reduce" (click)="minimize(window)">_</span>
+      <span class="action close" (click)="close(window)">X</span>
+    </div>
     <ng-container win-host [id]="window.id"></ng-container>
   </div>
 </ng-container>

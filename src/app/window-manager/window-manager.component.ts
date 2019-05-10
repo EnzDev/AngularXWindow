@@ -107,9 +107,7 @@ export class WindowManagerComponent implements AfterViewInit {
    */
   private updateLayersForNewWindow(window: WindowRef) {
     for (const _window of this.windows) {
-      if (!_window.window.instance.forcedLayer) {
-        _window.layer -= 1;
-      }
+      _window.layer -= _window.window.instance.forcedLayer ? 0 : 1;
     }
 
     return window.window.instance.forcedLayer || 5000;
@@ -177,24 +175,40 @@ export class WindowManagerComponent implements AfterViewInit {
     window.layer = 5000;
   }
 
-  public minimize(id: number) {
-    const window = this.windows.find((_window) => _window.id === id);
+  public minimize(window: WindowRef|number) {
+    if (typeof window === 'number') { // Switch ID reference to window
+      window = this.windows.find((_window) => _window.id === window);
+    }
+
     console.log('minimize');
     window.reduced = true;
   }
 
-  public restore(id: number) {
-    const window = this.windows.find((_window) => _window.id === id);
+  public restore(window: WindowRef|number) {
+    if (typeof window === 'number') { // Switch ID reference to window
+      window = this.windows.find((_window) => _window.id === window);
+    }
+
     console.log('restore');
     window.reduced = false;
   }
+
+  public close(window: WindowRef|number) {
+    if (typeof window === 'number') { // Switch ID reference to window
+      window = this.windows.find((_window) => _window.id === window);
+    }
+
+    window.window.destroy();
+    // @ts-ignore fixme: Type checking does not work here (see https://gist.github.com/EnzDev/6d1cdd5af265e5ff8094d6961a3a5434)
+    this.windows.splice(this.windows.findIndex((_window) => _window.id === window.id), 1);
+  }
 }
+
 
 interface WindowRef {
   id: number;
   window: ComponentRef<WindowComponent>;
   position: Position; // Top left position
   layer: number; // Layer number (uses z-index) default to 5000
-  stucked?: boolean;
   reduced: boolean;
 }
