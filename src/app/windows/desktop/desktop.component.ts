@@ -1,5 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {CSSDimension, Size, WindowComponent} from '../window.interface';
+import {ClassicWindowComponent} from '../classic-window/classic-window.component';
+
 
 @Component({
   selector: 'app-desktop',
@@ -19,6 +21,10 @@ export class DesktopComponent extends WindowComponent {
   };
   readonly minSize = this.maxSize;
   size: Size;
+
+  private apps  = {
+    classic: ClassicWindowComponent
+  };
 
   constructor() {
     super();

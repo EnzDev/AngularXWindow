@@ -7,6 +7,7 @@ import { DesktopComponent } from './windows/desktop/desktop.component';
 import {WinHost} from './windows/win-host.directive';
 import {TaskbarComponent} from './windows/taskbar/taskbar.component';
 import { ClassicWindowComponent } from './windows/classic-window/classic-window.component';
+import { AppIconComponent } from './windows/desktop/app-icon/app-icon.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { ClassicWindowComponent } from './windows/classic-window/classic-window.
     DesktopComponent,
     TaskbarComponent,
     WinHost,
-    ClassicWindowComponent
+    ClassicWindowComponent,
+    AppIconComponent
   ],
   imports: [
     BrowserModule

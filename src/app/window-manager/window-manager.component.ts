@@ -7,7 +7,7 @@ import {
   ChangeDetectorRef,
   Component,
   ComponentFactoryResolver,
-  ComponentRef, NgZone,
+  ComponentRef, OnDestroy,
   QueryList,
   Type,
   ViewChildren
@@ -16,30 +16,26 @@ import {WinHost} from '../windows/win-host.directive';
 import {TaskbarComponent} from '../windows/taskbar/taskbar.component';
 import {CSSDimension, Position, WindowComponent} from '../windows/window.interface';
 import {DesktopComponent} from '../windows/desktop/desktop.component';
-import {ClassicWindowComponent} from '../windows/classic-window/classic-window.component';
+import {WindowControllerService} from './window-controller.service';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-window-manager',
   templateUrl: './window-manager.component.html',
   styleUrls: ['./window-manager.component.sass']
 })
-export class WindowManagerComponent implements AfterViewInit {
+export class WindowManagerComponent implements AfterViewInit, OnDestroy {
   @ViewChildren(WinHost)
   winHosts: QueryList<WinHost>;
 
   private windows: WindowRef[] = [];
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver, private cdr: ChangeDetectorRef, private zone: NgZone) {
-    /*
-    // FIXME: Destroying test
-    setTimeout(() => {
-      const destroy = this.windows.pop();
-      const classname = destroy.window.componentType.name;
-      destroy.window.destroy();
-      cdr.markForCheck();
-      console.log(`DESTROYED ${classname}`);
-    }, 7000);
-    */
+  private destroy$ = new BehaviorSubject(null);
+
+  constructor(
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private cdr: ChangeDetectorRef,
+    private windowController: WindowControllerService) {
   }
 
   private _generateId = 0;
@@ -52,10 +48,9 @@ export class WindowManagerComponent implements AfterViewInit {
     this.createInstance(TaskbarComponent);
 
     // Draggable Elements
-    this.createInstance(ClassicWindowComponent);
-    this.createInstance(ClassicWindowComponent);
-    this.createInstance(ClassicWindowComponent);
-    this.createInstance(ClassicWindowComponent);
+    this.windowController.windowOpeningQueue$.subscribe(windowType => {
+      this.createInstance(windowType);
+    });
   }
 
   /**
@@ -201,6 +196,13 @@ export class WindowManagerComponent implements AfterViewInit {
     window.window.destroy();
     // @ts-ignore fixme: Type checking does not work here (see https://gist.github.com/EnzDev/6d1cdd5af265e5ff8094d6961a3a5434)
     this.windows.splice(this.windows.findIndex((_window) => _window.id === window.id), 1);
+  }
+
+  ngOnDestroy(): void {
+    for (const window of this.windows) {
+      this.close(window);
+    }
+    this.destroy$.next(true);
   }
 }
 
