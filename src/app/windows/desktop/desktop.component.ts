@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CSSDimension, Size, WindowComponent} from '../window.interface';
+import {CSSDimension, Position, Size, WindowComponent} from '../window.interface';
 import {ClassicWindowComponent} from '../classic-window/classic-window.component';
 
 
@@ -10,15 +10,15 @@ import {ClassicWindowComponent} from '../classic-window/classic-window.component
 })
 export class DesktopComponent extends WindowComponent {
   readonly forcedLayer = 5;
-  readonly forcedPosition = {
-    left: new CSSDimension(0, ''),
-    top: new CSSDimension(0, ''),
-  };
+  readonly forcedPosition = new Position(
+    new CSSDimension(0, ''),
+    new CSSDimension(0, ''),
+);
 
-  readonly maxSize = {
-    width: new CSSDimension(100, 'vw'),
-    height: new CSSDimension(96, 'vh')
-  };
+  readonly maxSize = new Size(
+    new CSSDimension(96, 'vh'),
+    new CSSDimension(100, 'vw'),
+  );
   readonly minSize = this.maxSize;
   size: Size;
 

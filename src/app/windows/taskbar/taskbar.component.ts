@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {CSSDimension, Size, WindowComponent} from '../window.interface';
+import {Component} from '@angular/core';
+import {CSSDimension, Position, Size, WindowComponent} from '../window.interface';
 
 @Component({
   selector: 'app-taskbar',
@@ -7,15 +7,15 @@ import {CSSDimension, Size, WindowComponent} from '../window.interface';
   styleUrls: ['./taskbar.component.sass']
 })
 export class TaskbarComponent extends WindowComponent {
-  readonly  forcedLayer = 5001; // Force layer
-  readonly forcedPosition = {
-    left: new CSSDimension(0, ''),
-    top: new CSSDimension(96, 'vh'),
-  };
-  readonly maxSize = {
-    height: new CSSDimension(4, 'vh'),
-    width: new CSSDimension(100, 'vw')
-  };
+  readonly forcedLayer = 5001; // Force layer
+  readonly forcedPosition = new Position(
+    new CSSDimension(96, 'vh'),
+    new CSSDimension(0, ''),
+  );
+  readonly maxSize = new Size(
+    new CSSDimension(4, 'vh'),
+    new CSSDimension(100, 'vw')
+  );
   readonly minSize = this.maxSize; // Immutable size
 
   size: Size;
@@ -26,5 +26,6 @@ export class TaskbarComponent extends WindowComponent {
   }
 
   // Ignore resizing
-  askForResize(desiredSize: Size) {}
+  askForResize(desiredSize: Size) {
+  }
 }

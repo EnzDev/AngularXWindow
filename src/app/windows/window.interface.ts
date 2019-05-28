@@ -1,5 +1,3 @@
-import {OnInit} from '@angular/core';
-
 export abstract class WindowComponent {
   readonly forcedLayer?: number;
   readonly forcedPosition?: Position;
@@ -28,17 +26,28 @@ export class CSSDimension {
     }
     return this.size.toString() + this.unit;
   }
+
+  add(value: number): void { this.size += value; }
+  sub(value: number): void { this.size -= value; }
+  copy(): CSSDimension {
+    return new CSSDimension(this.size, this.unit);
+  }
 }
 
 
 // Defined as [Width/X, Height/Y]
 export class Position {
-  left!: CSSDimension;
-  top!: CSSDimension;
+  constructor(public top: CSSDimension, public left: CSSDimension) {}
+  copy(): Position {
+    return new Position(this.top.copy(), this.left.copy());
+  }
 }
 
 export class Size {
-  height!: CSSDimension;
-  width!: CSSDimension;
+  constructor(public height: CSSDimension, public width: CSSDimension) {}
+
+  copy(): Size {
+    return new Size(this.height.copy(), this.width.copy());
+  }
 }
 

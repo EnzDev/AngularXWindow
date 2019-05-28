@@ -7,30 +7,30 @@ import {CSSDimension, Size, WindowComponent} from '../window.interface';
   styleUrls: ['./classic-window.component.sass']
 })
 export class ClassicWindowComponent extends WindowComponent {
-   readonly maxSize = {
-    width: new CSSDimension(80, 'vw'),
-    height: new CSSDimension(80, 'vh')
-  };
-  readonly minSize = {
-    width: new CSSDimension(5, 'vw'),
-    height: new CSSDimension(10, 'vh')
-  };
+   readonly maxSize = new Size(
+    new CSSDimension(80, 'vh'),
+    new CSSDimension(80, 'vw'),
+  );
+  readonly minSize = new Size(
+    new CSSDimension(10, 'vh'),
+    new CSSDimension(5, 'vw'),
+  );
   size: Size;
 
   constructor() {
     super();
-    this.size = {
-      width: new CSSDimension(
+    this.size = new Size(
+      new CSSDimension(
+        Math.floor(
+          Math.random() * (this.maxSize.height.size - this.minSize.height.size + 1)
+        ) + this.minSize.height.size, 'vh'
+      ),
+      new CSSDimension(
         Math.floor(
           Math.random() * (this.maxSize.width.size - this.minSize.width.size + 1)
         ) + this.minSize.width.size, 'vw'
       ),
-      height: new CSSDimension(
-        Math.floor(
-          Math.random() * (this.maxSize.height.size - this.minSize.height.size + 1)
-        ) + this.minSize.height.size, 'vh'
-      )
-    };
+    );
   }
 
   askForResize(desiredSize: Size) {
