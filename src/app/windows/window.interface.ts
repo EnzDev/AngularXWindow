@@ -1,3 +1,6 @@
+import {File} from '../os/fs.service';
+import {ReplaySubject} from 'rxjs';
+
 export abstract class WindowComponent {
   readonly forcedLayer?: number;
   readonly forcedPosition?: Position;
@@ -7,6 +10,10 @@ export abstract class WindowComponent {
   abstract readonly maxSize: Size;
 
   abstract askForResize(desiredSize: Size);
+}
+
+export abstract class WindowComponentWithFile extends WindowComponent {
+  public input?: ReplaySubject<File> = new ReplaySubject<File>();
 }
 
 export type CSSUnit = '%'|'px'|'vh'|'vw'|'em'|'ex'|'';

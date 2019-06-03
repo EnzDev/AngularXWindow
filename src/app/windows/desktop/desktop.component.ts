@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {CSSDimension, Position, Size, WindowComponent} from '../window.interface';
-import {ClassicWindowComponent} from '../classic-window/classic-window.component';
+import {FsService, File, Folder} from '../../os/fs.service';
 
 
 @Component({
@@ -22,13 +22,20 @@ export class DesktopComponent extends WindowComponent {
   readonly minSize = this.maxSize;
   size: Size;
 
-  private apps  = {
-    classic: ClassicWindowComponent
-  };
+  private desktop: { [p: string]: File };
 
-  constructor() {
+  constructor(private fs: FsService) {
     super();
     this.size = this.maxSize;
+
+    try {
+      const desktop = fs.resolve('/home/root/Desktop');
+      if (desktop instanceof Folder) {
+        this.desktop = desktop.files;
+      }
+    } catch (e) {
+      console.error('No Such File', e);
+    }
   }
 
   askForResize(desiredSize: Size) {

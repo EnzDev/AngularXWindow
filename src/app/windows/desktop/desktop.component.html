@@ -2,5 +2,7 @@
   [style.height]="size.height.get()"
   [style.width]="size.width.get()"
 >
-  <app-icon [app]="apps['classic']" src="https://img.icons8.com/color/64/000000/folder-invoices.png"></app-icon>
+  <ng-container *ngFor="let file of desktop | keyvalue">
+    <app-icon [title]="file.key" [file]="file.value" src=""></app-icon>
+  </ng-container>
 </div>

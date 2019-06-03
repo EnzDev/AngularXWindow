@@ -15,10 +15,11 @@ import {
 } from '@angular/core';
 import {WinHost} from '../windows/win-host.directive';
 import {TaskbarComponent} from '../windows/taskbar/taskbar.component';
-import {CSSDimension, Position, WindowComponent} from '../windows/window.interface';
+import {CSSDimension, Position, WindowComponent, WindowComponentWithFile} from '../windows/window.interface';
 import {DesktopComponent} from '../windows/desktop/desktop.component';
 import {WindowControllerService} from './window-controller.service';
 import {BehaviorSubject} from 'rxjs';
+import {File} from '../os/fs.service';
 
 @Component({
   selector: 'app-window-manager',
@@ -53,8 +54,10 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     this.createInstance(TaskbarComponent);
 
     // Draggable Elements
-    this.windowController.windowOpeningQueue$.subscribe(windowType => {
-      this.createInstance(windowType);
+    this.windowController.windowOpeningQueue$.subscribe(
+      ([input]: [Type<WindowComponent>, File]) => {
+        // @ts-ignore Type is not clearly detected by tslint
+        this.createInstance(...input);
     });
   }
 
@@ -116,7 +119,7 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
    * Instantiate a Window and insert it into X
    * @param type: the Window to instantiate
    */
-  private createInstance(type: Type<WindowComponent>): number {
+  private createInstance(type: Type<WindowComponent | WindowComponentWithFile>, fileInjector ?: File): number {
     const factory = this.componentFactoryResolver.resolveComponentFactory(type);
     const id = this.generateId;
 
@@ -129,6 +132,10 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     const selectedWindow = this.windows.find((w) => w.id === id);
 
     selectedWindow.window = ref.createComponent(factory);
+    const instance = selectedWindow.window.instance;
+    if (instance instanceof WindowComponentWithFile) {
+      instance.input.next(fileInjector);
+    }
     selectedWindow.window.onDestroy(() => {
 
     });

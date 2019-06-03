@@ -7,7 +7,10 @@ import { DesktopComponent } from './windows/desktop/desktop.component';
 import {WinHost} from './windows/win-host.directive';
 import {TaskbarComponent} from './windows/taskbar/taskbar.component';
 import { ClassicWindowComponent } from './windows/classic-window/classic-window.component';
-import { AppIconComponent } from './windows/desktop/app-icon/app-icon.component';
+import { IconComponent } from './windows/desktop/app-icon/icon.component';
+import {FsService} from './os/fs.service';
+import {MimeService} from './os/mime.service';
+import { CvReaderComponent } from './windows/apps/cv-reader/cv-reader.component';
 
 @NgModule({
   declarations: [
@@ -17,13 +20,14 @@ import { AppIconComponent } from './windows/desktop/app-icon/app-icon.component'
     TaskbarComponent,
     WinHost,
     ClassicWindowComponent,
-    AppIconComponent
+    IconComponent,
+    CvReaderComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
   ],
-  providers: [],
+  providers: [FsService, MimeService],
   bootstrap: [AppComponent],
-  entryComponents: [DesktopComponent, TaskbarComponent, ClassicWindowComponent]
+  entryComponents: [DesktopComponent, TaskbarComponent, ClassicWindowComponent, CvReaderComponent]
 })
 export class AppModule { }

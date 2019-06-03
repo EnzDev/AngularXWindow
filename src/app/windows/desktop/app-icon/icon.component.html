@@ -1,0 +1,15 @@
+<ng-container *ngIf="ifApp(file)">
+  <div (dblclick)="this.windowController.openNewWindow([file.launchClass])">
+    <img (click)="select()" [src]="mimeService.getPictureForFile(file, title)" >
+    <span>{{title}}</span>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!ifApp(file)">
+  <div>
+    <img (click)="select()"
+         (dblclick)="mimeService.getAppForFile(file) && this.windowController.openNewWindow([mimeService.getAppForFile(file), file])"
+         [src]="mimeService.getPictureForFile(file, title)" >
+    <span>{{title}}</span>
+  </div>
+</ng-container>
