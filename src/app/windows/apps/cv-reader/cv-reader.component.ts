@@ -1,7 +1,5 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {CSSDimension, Size, WindowComponent, WindowComponentWithFile} from '../../window.interface';
-import {Document, ExternalDocument} from 'pdfjs';
-import {HttpClient} from '@angular/common/http';
+import {AfterViewInit, Component} from '@angular/core';
+import {CSSDimension, Size, WindowComponentWithFile} from '../../window.interface';
 import {PDFFile} from '../../../os/fs.service';
 
 @Component({
@@ -10,16 +8,15 @@ import {PDFFile} from '../../../os/fs.service';
   styleUrls: ['./cv-reader.component.sass']
 })
 export class CvReaderComponent extends WindowComponentWithFile implements AfterViewInit {
+  title = 'PDF Reader';
+
   readonly maxSize = new Size(
     new CSSDimension(80, 'vh'),
     new CSSDimension(80, 'vw'),
   );
   readonly minSize = this.maxSize;
   readonly size: Size = this.maxSize;
-
-  constructor(private http: HttpClient) {
-    super();
-  }
+  private pdfSrc: string;
 
   askForResize(desiredSize: Size) {
   }
@@ -28,11 +25,8 @@ export class CvReaderComponent extends WindowComponentWithFile implements AfterV
     this.input.subscribe(fileReady => {
       if (fileReady instanceof PDFFile) {
         console.log('Opening', fileReady);
-        this.http.get(fileReady.sourceUrl, {responseType: 'arraybuffer'}).subscribe( response => {
-          // const doc = new ExternalDocument(response);
-        });
+        this.pdfSrc = fileReady.sourceUrl;
       }
     });
   }
-
 }

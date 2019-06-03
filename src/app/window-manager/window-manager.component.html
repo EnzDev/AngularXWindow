@@ -1,7 +1,6 @@
 <ng-container *ngFor="let window of windows">
   <div
     class="window" draggable="true"
-    (dragstart)="startDrag($event, window)"
     (dragover)="onDragOver($event, window)"
     (drop)="onDragDrop($event, window)"
 
@@ -11,8 +10,11 @@
     [style.left]="window.position ? window.position.left.get() : 0"
     [style.top]="window.position ? window.position.top.get() : 0"
     [style.z-index]="window.layer">
-    <div class="windowBar" *ngIf="window.window && !window.window.instance.forcedLayer">
-      <span>{{ "Title" }}</span>
+    <div (dragend)="exitDrag()" (dragstart)="startDrag($event, window)"
+         *ngIf="window.window && !window.window.instance.forcedLayer" class="windowBar"
+         draggable="true">
+
+      <span>{{ window.window.instance.title }}</span>
       <span class="separator"></span>
       <span class="action reduce" (click)="minimize(window)">_</span>
       <span class="action close" (click)="close(window)">X</span>
@@ -20,3 +22,6 @@
     <ng-container win-host [id]="window.id"></ng-container>
   </div>
 </ng-container>
+
+<div (dragover)="onDragOver($event)" (drop)="onDragDrop($event)" *ngIf="iframeFix"
+     style="z-index: 5000; position: fixed;width: 100vw;height: 96vh; top: 0;left: 0;"></div>

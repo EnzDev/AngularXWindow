@@ -2,6 +2,7 @@ import {File} from '../os/fs.service';
 import {ReplaySubject} from 'rxjs';
 
 export abstract class WindowComponent {
+  title = 'Default title';
   readonly forcedLayer?: number;
   readonly forcedPosition?: Position;
   // Sizes

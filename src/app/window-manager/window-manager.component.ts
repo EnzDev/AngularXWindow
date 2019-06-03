@@ -30,18 +30,25 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
   @ViewChildren(WinHost)
   winHosts: QueryList<WinHost>;
 
+  /**
+   * windows holds a list of every window, with their references
+   * @see WindowRef
+   */
   private windows: WindowRef[] = [];
 
+  /**
+   * iframeFix is an invisible div place at 5001 (Same as the taskBar)
+   * It allow any window to be moved anywhere in the desktop (especially over an iframe)
+   */
+  private iframeFix = false;
+
   private destroy$ = new BehaviorSubject(null);
+  private desktopId = -1;
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private cdr: ChangeDetectorRef,
     private windowController: WindowControllerService) {
-    // tslint:disable-next-line:no-string-literal
-    window['old'] = [];
-    // tslint:disable-next-line:no-string-literal
-    window['new'] = [];
   }
 
   private _generateId = 0;
@@ -50,14 +57,13 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.createInstance(DesktopComponent);
+    this.desktopId = this.createInstance(DesktopComponent);
     this.createInstance(TaskbarComponent);
 
     // Draggable Elements
     this.windowController.windowOpeningQueue$.subscribe(
-      ([input]: [Type<WindowComponent>, File]) => {
-        // @ts-ignore Type is not clearly detected by tslint
-        this.createInstance(...input);
+      ([type, file]) => {
+        this.createInstance(type, file);
     });
   }
 
@@ -118,6 +124,7 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
   /**
    * Instantiate a Window and insert it into X
    * @param type: the Window to instantiate
+   * @param fileInjector: A file that can be injected into a WindowComponentWithFile
    */
   private createInstance(type: Type<WindowComponent | WindowComponentWithFile>, fileInjector ?: File): number {
     const factory = this.componentFactoryResolver.resolveComponentFactory(type);
@@ -133,7 +140,7 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
 
     selectedWindow.window = ref.createComponent(factory);
     const instance = selectedWindow.window.instance;
-    if (instance instanceof WindowComponentWithFile) {
+    if (instance instanceof WindowComponentWithFile && fileInjector) {
       instance.input.next(fileInjector);
     }
     selectedWindow.window.onDestroy(() => {
@@ -157,12 +164,13 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     }
 
     this.pixelizePositions();
-
+    const desktop = this.windows.find((_window) => _window.id === this.desktopId);
     const winBefore = this.windows.find((win) => win.layer === 5000);
     if (winBefore) {
       const pos = winBefore.position.copy();
-      pos.left.add(50);
-      pos.top.add(50);
+
+      pos.left.size = (pos.left.size + 50) % (desktop.window.location.nativeElement as HTMLElement).offsetWidth;
+      pos.top.size = (pos.top.size + 50) % (desktop.window.location.nativeElement as HTMLElement).offsetHeight;
       return pos;
     } else {
       return new Position(new CSSDimension(20, 'px'), new CSSDimension(20, 'px'));
@@ -186,6 +194,8 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     return window.window.instance.forcedLayer || 5000;
   }
 
+  // #region DRAG AND DROP WINDOW HANDLERS
+
   private startDrag($event: DragEvent, window: WindowRef) {
     if (window.window.instance.forcedPosition) {
       $event.preventDefault();
@@ -196,12 +206,21 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
 
     $event.dataTransfer.dropEffect = 'move';
     this.switch(window);
+    this.iframeFix = true;
     $event.dataTransfer.setData('application/json', JSON.stringify({id: window.id, originalOffset: [$event.offsetX, $event.offsetY]}));
   }
 
-  private onDragOver($event: DragEvent, hoverZone: WindowRef) {
+  /**
+   * Used to close the iframeFix div
+   * @see iframeFix
+   */
+  private exitDrag() {
+    this.iframeFix = false;
+  }
+
+  private onDragOver($event: DragEvent, hoverZone?: WindowRef) {
     // Prevent moving windows behind the Taskbar
-    if (hoverZone.window.componentType.name === 'TaskbarComponent') {
+    if (hoverZone && hoverZone.window.componentType.name === 'TaskbarComponent') {
       return;
     }
 
@@ -215,9 +234,10 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     toDrag.position.top = new CSSDimension($event.clientY - parsedData.originalOffset[1], 'px');
   }
 
-  private onDragDrop($event: DragEvent, dropZone: WindowRef) {
+  private onDragDrop($event: DragEvent, dropZone?: WindowRef) {
+    this.iframeFix = false;
     // Prevent moving windows behind the Taskbar
-    if (dropZone.window.componentType.name === 'TaskbarComponent') {
+    if (dropZone && dropZone.window.componentType.name === 'TaskbarComponent') {
       return;
     }
 
@@ -229,6 +249,12 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     toMove.position.top = new CSSDimension($event.clientY - parsedData.originalOffset[1], 'px');
   }
 
+  // #endregion DRAG AND DROP WINDOW HANDLERS
+
+  /**
+   * Transform every non px position to it pixel equivalent
+   * @todo Make an equivalent function to reposition everything when resizing
+   */
   private pixelizePositions() {
     for (const win of this.windows) {
       const elmRef = (win.window.location.nativeElement as HTMLElement).parentElement;
@@ -243,11 +269,22 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
   }
 }
 
-
+/**
+ * This interface provide an handful of information about a window
+ */
 interface WindowRef {
+  // The window id (always unique but just incremented)
   id: number;
+
+  // The ComponentRef for the window (and its component instance)
   window: ComponentRef<WindowComponent>;
+
+  // Where if the window
   position: Position; // Top left position
+
+  // The layer where the window is (5000 is default topmost)
   layer: number; // Layer number (uses z-index) default to 5000
+
+  // If the window is currently reduced (The TaskBar should allow to restore it)
   reduced: boolean;
 }

@@ -1,3 +1,8 @@
-<p>
-  cv-reader works!
-</p>
+<div>
+  <ng2-pdfjs-viewer *ngIf="pdfSrc" [pdfSrc]="pdfSrc"
+                    [showSpinner]="true"
+                    [style.height]="size.height.get()"
+                    [style.width]="size.width.get()"
+                    style="display: block;"
+  ></ng2-pdfjs-viewer>
+</div>
