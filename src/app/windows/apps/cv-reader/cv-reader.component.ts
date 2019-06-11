@@ -16,7 +16,7 @@ export class CvReaderComponent extends WindowComponentWithFile implements AfterV
   );
   readonly minSize = this.maxSize;
   readonly size: Size = this.maxSize;
-  private pdfSrc: string;
+  public pdfSrc: string;
 
   askForResize(desiredSize: Size) {
     return false;

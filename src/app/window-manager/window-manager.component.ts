@@ -46,13 +46,13 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
    * windows holds a list of every window, with their references
    * @see WindowRef
    */
-  private windows: WindowRef[] = [];
+  public windows: WindowRef[] = [];
 
   /**
    * iframeFix is an invisible div place at 5001 (Same as the taskBar)
    * It allow any window to be moved anywhere in the desktop (especially over an iframe)
    */
-  private iframeFix = false;
+  public iframeFix = false;
 
   private destroy$ = new BehaviorSubject(null);
   private desktopId = -1;

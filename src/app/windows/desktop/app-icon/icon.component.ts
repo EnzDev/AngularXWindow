@@ -1,6 +1,5 @@
-import {Component, Input, OnInit, Type} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {WindowControllerService} from '../../../window-manager/window-controller.service';
-import {WindowComponent} from '../../window.interface';
 import {App, File} from '../../../os/fs.service';
 import {MimeService} from '../../../os/mime.service';
 
@@ -12,7 +11,7 @@ import {MimeService} from '../../../os/mime.service';
 export class IconComponent implements OnInit {
 
   @Input()
-  private file: File;
+  public file: File;
 
   @Input()
   private title: string;
@@ -25,7 +24,7 @@ export class IconComponent implements OnInit {
 
   ngOnInit() {}
 
-  private ifApp(file: File) {
+  public ifApp(file: File) {
     return file instanceof App;
   }
 
