@@ -1,8 +1,8 @@
 import {Injectable, Type} from '@angular/core';
-import {App, File, Folder, PDFFile} from './fs.service';
 import {WindowComponent} from '../windows/window.interface';
 import {ClassicWindowComponent} from '../windows/classic-window/classic-window.component';
 import {CvReaderComponent} from '../windows/apps/cv-reader/cv-reader.component';
+import {App, File, Folder, PDFFile} from './fs.models';
 
 @Injectable({
   providedIn: 'root'

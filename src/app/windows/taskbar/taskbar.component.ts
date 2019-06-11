@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
-import {CSSDimension, Position, Size, WindowComponent} from '../window.interface';
+import {WindowComponent} from '../window.interface';
+import {CSSDimension, Position, Size} from '../css.models';
 
 @Component({
   selector: 'app-taskbar',

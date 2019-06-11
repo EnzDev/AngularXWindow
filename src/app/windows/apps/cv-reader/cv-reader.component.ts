@@ -1,6 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
-import {CSSDimension, Size, WindowComponentWithFile} from '../../window.interface';
-import {PDFFile} from '../../../os/fs.service';
+import {WindowComponentWithFile} from '../../window.interface';
+import {PDFFile} from '../../../os/fs.models';
+import {CSSDimension, Size} from '../../css.models';
 
 @Component({
   selector: 'app-cv-reader',
@@ -26,7 +27,6 @@ export class CvReaderComponent extends WindowComponentWithFile implements AfterV
   ngAfterViewInit(): void {
     this.input.subscribe(fileReady => {
       if (fileReady instanceof PDFFile) {
-        console.log('Opening', fileReady);
         this.pdfSrc = fileReady.sourceUrl;
       }
     });

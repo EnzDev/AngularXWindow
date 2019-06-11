@@ -15,13 +15,14 @@ import {
 } from '@angular/core';
 import {WinHost} from '../windows/win-host.directive';
 import {TaskbarComponent} from '../windows/taskbar/taskbar.component';
-import {CSSDimension, Position, Size, WindowComponent, WindowComponentWithFile} from '../windows/window.interface';
+import {WindowComponent, WindowComponentWithFile} from '../windows/window.interface';
 import {DesktopComponent} from '../windows/desktop/desktop.component';
 import {WindowControllerService} from './window-controller.service';
 import {BehaviorSubject} from 'rxjs';
-import {File} from '../os/fs.service';
 import {ResizeEvent} from 'angular-resizable-element';
 import {ResizeCursors} from 'angular-resizable-element/resizable.directive';
+import {File} from '../os/fs.models';
+import {CSSDimension, Position, Size} from '../windows/css.models';
 
 @Component({
   selector: 'app-window-manager',

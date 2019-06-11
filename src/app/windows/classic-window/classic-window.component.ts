@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
-import {CSSDimension, Size, WindowComponent} from '../window.interface';
+import {WindowComponent} from '../window.interface';
+import {CSSDimension, Size} from '../css.models';
 
 @Component({
   selector: 'app-classic-window',

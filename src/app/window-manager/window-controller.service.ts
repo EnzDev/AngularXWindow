@@ -1,7 +1,7 @@
 import {Injectable, Type} from '@angular/core';
 import {ReplaySubject} from 'rxjs';
 import {WindowComponent, WindowComponentWithFile} from '../windows/window.interface';
-import {File} from '../os/fs.service';
+import {File} from '../os/fs.models';
 
 @Injectable({
   providedIn: 'root'

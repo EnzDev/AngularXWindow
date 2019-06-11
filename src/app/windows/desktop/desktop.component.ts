@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
-import {CSSDimension, Position, Size, WindowComponent} from '../window.interface';
-import {File, Folder, FsService} from '../../os/fs.service';
+import {WindowComponent} from '../window.interface';
+import {FsService} from '../../os/fs.service';
+import {File, Folder} from '../../os/fs.models';
+import {CSSDimension, Position, Size} from '../css.models';
 
 
 @Component({

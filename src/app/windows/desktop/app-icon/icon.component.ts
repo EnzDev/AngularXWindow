@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {WindowControllerService} from '../../../window-manager/window-controller.service';
-import {App, File} from '../../../os/fs.service';
 import {MimeService} from '../../../os/mime.service';
+import {App, File} from '../../../os/fs.models';
 
 @Component({
   selector: 'app-icon',
