@@ -1,20 +1,51 @@
+@import "~src/styles"
+
 .window
   display: block
   position: fixed
 
+  &.normal
+    border: solid 2px $main_color
+    border-top: 0
+
 .windowBar
+  font-weight: bold
   display: flex
-  height: 1.2em
-  background: grey
+  height: 1.7em
+  padding: 0 0 0 0.5em
+  background: $main_color
+  color: $light
   align-items: center
   justify-content: space-between
-  .action
-    background: #666
-    width: 1em
-    height: 1em
-    border: solid darkslategrey 1px
-    text-align: center
-    .reduce
-      line-height: 0.8em
+  // Disable user select on the winbar
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+
+  .button-pack
+    display: inline-flex
+    width: 5.5em
+    align-items: center
+    height: 100%
+    justify-content: space-between
+
+    .action
+      text-align: center
+      font-size: 1em
+      flex-grow: 1
+      height: 100%
+      align-items: center
+      display: flex
+      justify-content: center
+
+      &:hover
+        background: rgba(0, 0, 0, 0.2)
+
+        &.close
+          background: rgba(255, 0, 0, 0.75)
+
+      .reduce
+        line-height: 0.8em
   .separator
     flex-grow: 0.95

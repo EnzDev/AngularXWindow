@@ -19,7 +19,9 @@ export class CvReaderComponent extends WindowComponentWithFile implements AfterV
   private pdfSrc: string;
 
   askForResize(desiredSize: Size) {
+    return false;
   }
+
 
   ngAfterViewInit(): void {
     this.input.subscribe(fileReady => {

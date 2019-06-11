@@ -27,5 +27,6 @@ export class TaskbarComponent extends WindowComponent {
 
   // Ignore resizing
   askForResize(desiredSize: Size) {
+    return false;
   }
 }

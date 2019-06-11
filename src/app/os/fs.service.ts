@@ -1,7 +1,6 @@
 import {Injectable, Type} from '@angular/core';
 import {WindowComponent} from '../windows/window.interface';
 import {ClassicWindowComponent} from '../windows/classic-window/classic-window.component';
-import {debug} from 'util';
 
 @Injectable({
   providedIn: 'root'

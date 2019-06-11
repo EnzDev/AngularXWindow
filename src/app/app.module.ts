@@ -13,6 +13,7 @@ import {MimeService} from './os/mime.service';
 import {CvReaderComponent} from './windows/apps/cv-reader/cv-reader.component';
 import {HttpClientModule} from '@angular/common/http';
 import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
+import {ResizableModule} from 'angular-resizable-element';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
     CvReaderComponent
   ],
   imports: [
+    ResizableModule,
     BrowserModule,
     HttpClientModule,
     PdfJsViewerModule

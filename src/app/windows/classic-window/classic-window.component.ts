@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
 import {CSSDimension, Size, WindowComponent} from '../window.interface';
 
 @Component({
@@ -32,8 +32,4 @@ export class ClassicWindowComponent extends WindowComponent {
       ),
     );
   }
-
-  askForResize(desiredSize: Size) {
-  }
-
 }

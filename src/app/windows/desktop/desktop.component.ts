@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {CSSDimension, Position, Size, WindowComponent} from '../window.interface';
-import {FsService, File, Folder} from '../../os/fs.service';
+import {File, Folder, FsService} from '../../os/fs.service';
 
 
 @Component({
@@ -39,6 +39,7 @@ export class DesktopComponent extends WindowComponent {
   }
 
   askForResize(desiredSize: Size) {
+    return false;
   }
 
 }

@@ -1,23 +1,30 @@
 <ng-container *ngFor="let window of windows">
-  <div
-    class="window" draggable="true"
-    (dragover)="onDragOver($event, window)"
-    (drop)="onDragDrop($event, window)"
+  <div (resizeEnd)="finishResizing()"
+       (resizeStart)="beginToResize(window, $event)"
+       (resizing)="handleResizeFor(window, $event)"
+       [class.normal]="window.window && !window.window.instance.forcedLayer"
+       [resizeCursors]="RESIZE_CURSORS"
+       [resizeEdges]="{bottom: true, right: true, top: true, left: true}"
+       class="window" draggable="true" mwlResizable
+       (dragover)="onDragOver($event, window)"
+       (drop)="onDragDrop($event, window)"
 
-    (click)="switch(window)"
+       (click)="switch(window)"
 
-    [style.visibility]="window.reduced ? 'hidden' : 'unset'"
-    [style.left]="window.position ? window.position.left.get() : 0"
-    [style.top]="window.position ? window.position.top.get() : 0"
-    [style.z-index]="window.layer">
+       [style.visibility]="window.reduced ? 'hidden' : 'unset'"
+       [style.left]="window.position ? window.position.left.get() : 0"
+       [style.top]="window.position ? window.position.top.get() : 0"
+       [style.z-index]="window.layer">
     <div (dragend)="exitDrag()" (dragstart)="startDrag($event, window)"
          *ngIf="window.window && !window.window.instance.forcedLayer" class="windowBar"
          draggable="true">
 
       <span>{{ window.window.instance.title }}</span>
       <span class="separator"></span>
-      <span class="action reduce" (click)="minimize(window)">_</span>
-      <span class="action close" (click)="close(window)">X</span>
+      <span class="button-pack">
+        <span (click)="minimize(window)" class="action reduce">&mdash;</span>
+        <span (click)="close(window)" class="action close">X</span>
+      </span>
     </div>
     <ng-container win-host [id]="window.id"></ng-container>
   </div>

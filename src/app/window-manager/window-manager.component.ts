@@ -15,11 +15,13 @@ import {
 } from '@angular/core';
 import {WinHost} from '../windows/win-host.directive';
 import {TaskbarComponent} from '../windows/taskbar/taskbar.component';
-import {CSSDimension, Position, WindowComponent, WindowComponentWithFile} from '../windows/window.interface';
+import {CSSDimension, Position, Size, WindowComponent, WindowComponentWithFile} from '../windows/window.interface';
 import {DesktopComponent} from '../windows/desktop/desktop.component';
 import {WindowControllerService} from './window-controller.service';
 import {BehaviorSubject} from 'rxjs';
 import {File} from '../os/fs.service';
+import {ResizeEvent} from 'angular-resizable-element';
+import {ResizeCursors} from 'angular-resizable-element/resizable.directive';
 
 @Component({
   selector: 'app-window-manager',
@@ -27,6 +29,16 @@ import {File} from '../os/fs.service';
   styleUrls: ['./window-manager.component.sass']
 })
 export class WindowManagerComponent implements AfterViewInit, OnDestroy {
+
+  private RESIZE_CURSORS: ResizeCursors = Object.freeze({
+    topLeft: 'nw-resize',
+    topRight: 'ne-resize',
+    bottomLeft: 'sw-resize',
+    bottomRight: 'se-resize',
+    leftOrRight: 'e-resize',
+    topOrBottom: 'n-resize'
+  });
+  private resizeOriginHolder?: Position;
   @ViewChildren(WinHost)
   winHosts: QueryList<WinHost>;
 
@@ -44,6 +56,9 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
 
   private destroy$ = new BehaviorSubject(null);
   private desktopId = -1;
+  private dragEnabled = true;
+
+  private _generateId = 0;
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -51,7 +66,6 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     private windowController: WindowControllerService) {
   }
 
-  private _generateId = 0;
   public get generateId() {
     return this._generateId++;
   }
@@ -175,12 +189,6 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     } else {
       return new Position(new CSSDimension(20, 'px'), new CSSDimension(20, 'px'));
     }
-
-    /*
-    window.position
-    window.position.left.add(10);
-    window.position.top.add(10);
-    */
   }
 
   /**
@@ -196,18 +204,10 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
 
   // #region DRAG AND DROP WINDOW HANDLERS
 
-  private startDrag($event: DragEvent, window: WindowRef) {
-    if (window.window.instance.forcedPosition) {
-      $event.preventDefault();
-      return;
-    }
-    $event.dataTransfer.setDragImage(document.createElement('span'), 0, 0);
-
-
-    $event.dataTransfer.dropEffect = 'move';
-    this.switch(window);
+  beginToResize(window: WindowRef, $event: ResizeEvent) {
     this.iframeFix = true;
-    $event.dataTransfer.setData('application/json', JSON.stringify({id: window.id, originalOffset: [$event.offsetX, $event.offsetY]}));
+    this.resizeOriginHolder = window.position.copy();
+    this.dragEnabled = false;
   }
 
   /**
@@ -218,35 +218,30 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
     this.iframeFix = false;
   }
 
-  private onDragOver($event: DragEvent, hoverZone?: WindowRef) {
-    // Prevent moving windows behind the Taskbar
-    if (hoverZone && hoverZone.window.componentType.name === 'TaskbarComponent') {
-      return;
-    }
-
-    $event.preventDefault();
-    $event.dataTransfer.dropEffect = 'move';
-
-    const parsedData = JSON.parse($event.dataTransfer.getData('application/json')) as { id: number, originalOffset: [number, number] };
-
-    const toDrag = this.windows.find((window) => window.id === parsedData.id);
-    toDrag.position.left = new CSSDimension($event.clientX - parsedData.originalOffset[0], 'px');
-    toDrag.position.top = new CSSDimension($event.clientY - parsedData.originalOffset[1], 'px');
+  finishResizing() {
+    this.iframeFix = false;
+    this.resizeOriginHolder = null;
+    this.dragEnabled = true;
   }
 
-  private onDragDrop($event: DragEvent, dropZone?: WindowRef) {
-    this.iframeFix = false;
-    // Prevent moving windows behind the Taskbar
-    if (dropZone && dropZone.window.componentType.name === 'TaskbarComponent') {
+  handleResizeFor(window: WindowRef, $event: ResizeEvent) {
+    const barHeight = (window.window.location.nativeElement as HTMLElement).parentElement.firstElementChild.clientHeight;
+    const resized = window.window.instance.askForResize(new Size(
+      new CSSDimension($event.rectangle.height - barHeight - 2, 'px'),
+      new CSSDimension($event.rectangle.width - 4, 'px')) // Remove the small pad
+    );
+
+    if (!resized) {
       return;
     }
 
-    $event.preventDefault();
-    const parsedData = JSON.parse($event.dataTransfer.getData('application/json')) as { id: number, originalOffset: [number, number] };
+    if ($event.edges.left) {
+      window.position.left.size = this.resizeOriginHolder.left.size + parseInt($event.edges.left.toString(), null);
+    }
 
-    const toMove = this.windows.find((window) => window.id === parsedData.id);
-    toMove.position.left = new CSSDimension($event.clientX - parsedData.originalOffset[0], 'px');
-    toMove.position.top = new CSSDimension($event.clientY - parsedData.originalOffset[1], 'px');
+    if ($event.edges.top) {
+      window.position.top.size = this.resizeOriginHolder.top.size + parseInt($event.edges.top.toString(), null);
+    }
   }
 
   // #endregion DRAG AND DROP WINDOW HANDLERS
@@ -266,6 +261,51 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
         );
       }
     }
+  }
+
+  private startDrag($event: DragEvent, window: WindowRef) {
+    if (!this.dragEnabled || window.window.instance.forcedPosition) {
+      $event.preventDefault();
+      return;
+    }
+    $event.dataTransfer.setDragImage(document.createElement('span'), 0, 0);
+
+
+    $event.dataTransfer.dropEffect = 'move';
+    this.switch(window);
+    this.iframeFix = true;
+    $event.dataTransfer.setData('application/json', JSON.stringify({id: window.id, originalOffset: [$event.offsetX, $event.offsetY]}));
+  }
+
+  private onDragOver($event: DragEvent, hoverZone?: WindowRef) {
+    // Prevent moving windows behind the Taskbar
+    if (!this.dragEnabled || hoverZone && hoverZone.window.componentType.name === 'TaskbarComponent') {
+      return;
+    }
+
+    $event.preventDefault();
+    $event.dataTransfer.dropEffect = 'move';
+
+    const parsedData = JSON.parse($event.dataTransfer.getData('application/json')) as { id: number, originalOffset: [number, number] };
+
+    const toDrag = this.windows.find((window) => window.id === parsedData.id);
+    toDrag.position.left = new CSSDimension($event.clientX - parsedData.originalOffset[0], 'px');
+    toDrag.position.top = new CSSDimension($event.clientY - parsedData.originalOffset[1], 'px');
+  }
+
+  private onDragDrop($event: DragEvent, dropZone?: WindowRef) {
+    this.iframeFix = false;
+    // Prevent moving windows behind the Taskbar
+    if (!this.dragEnabled || dropZone && dropZone.window.componentType.name === 'TaskbarComponent') {
+      return;
+    }
+
+    $event.preventDefault();
+    const parsedData = JSON.parse($event.dataTransfer.getData('application/json')) as { id: number, originalOffset: [number, number] };
+
+    const toMove = this.windows.find((window) => window.id === parsedData.id);
+    toMove.position.left = new CSSDimension($event.clientX - parsedData.originalOffset[0], 'px');
+    toMove.position.top = new CSSDimension($event.clientY - parsedData.originalOffset[1], 'px');
   }
 }
 
