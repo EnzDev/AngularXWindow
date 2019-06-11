@@ -19,7 +19,7 @@ export class FsService {
     desktop.files['File Explorer'] = new App(ClassicWindowComponent, 'https://img.icons8.com/cotton/64/000000/folder-invoices.png');
     desktop.files.test = new TextFile();
     (desktop.files.test as TextFile).content = 'coucou';
-    desktop.files['cv.pdf'] = new PDFFile('./assets/cv.pdf');
+    desktop.files['cv.pdf'] = new PDFFile('/assets/cv.pdf');
   }
 
   public resolve(path: string): File {

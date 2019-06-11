@@ -14,6 +14,11 @@ import {CvReaderComponent} from './windows/apps/cv-reader/cv-reader.component';
 import {HttpClientModule} from '@angular/common/http';
 import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
 import {ResizableModule} from 'angular-resizable-element';
+import {APP_BASE_HREF, PlatformLocation} from '@angular/common';
+
+export function getBaseHref(platformLocation: PlatformLocation): string {
+  return platformLocation.getBaseHrefFromDOM();
+}
 
 @NgModule({
   declarations: [
@@ -32,7 +37,14 @@ import {ResizableModule} from 'angular-resizable-element';
     HttpClientModule,
     PdfJsViewerModule
   ],
-  providers: [FsService, MimeService],
+  providers: [
+    FsService,
+    MimeService,
+    {
+      provide: APP_BASE_HREF,
+      useFactory: getBaseHref,
+      deps: [PlatformLocation]
+    }],
   bootstrap: [AppComponent],
   entryComponents: [DesktopComponent, TaskbarComponent, ClassicWindowComponent, CvReaderComponent]
 })
