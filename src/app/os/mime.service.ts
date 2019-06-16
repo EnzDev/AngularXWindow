@@ -1,8 +1,8 @@
 import {Injectable, Type} from '@angular/core';
 import {WindowComponent} from '../windows/window.interface';
-import {ClassicWindowComponent} from '../windows/classic-window/classic-window.component';
 import {CvReaderComponent} from '../windows/apps/cv-reader/cv-reader.component';
 import {App, File, Folder, PDFFile} from './fs.models';
+import {TextReaderComponent} from '../windows/apps/text-reader/text-reader.component';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +41,6 @@ export class MimeService {
       return CvReaderComponent;
     }
 
-    return ClassicWindowComponent;
+    return TextReaderComponent;
   }
 }

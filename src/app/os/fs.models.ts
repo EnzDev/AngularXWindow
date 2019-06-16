@@ -11,7 +11,9 @@ export class File {
 }
 
 export class TextFile extends File {
-  content: string;
+  constructor(public content: string) {
+    super();
+  }
 }
 
 export class App extends File {
@@ -28,4 +30,9 @@ export class PDFFile extends File {
 
 export class Folder extends File {
   files: { [key: string]: File } = {};
+}
+
+export class FileHolder<T> {
+  constructor(public name: string, public file: T) {
+  }
 }

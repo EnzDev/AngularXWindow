@@ -1,5 +1,5 @@
 import {ReplaySubject} from 'rxjs';
-import {File} from '../os/fs.models';
+import {File, FileHolder} from '../os/fs.models';
 import {CSSDimension, Position, Size} from './css.models';
 
 export abstract class WindowComponent {
@@ -27,8 +27,11 @@ export abstract class WindowComponent {
     this.size = newSize;
     return changed;
   }
+
+  close() {
+  }
 }
 
 export abstract class WindowComponentWithFile extends WindowComponent {
-  public input?: ReplaySubject<File> = new ReplaySubject<File>();
+  public input?: ReplaySubject<FileHolder<File>> = new ReplaySubject<FileHolder<File>>();
 }

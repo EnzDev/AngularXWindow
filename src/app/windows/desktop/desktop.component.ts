@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
 import {WindowComponent} from '../window.interface';
 import {FsService} from '../../os/fs.service';
-import {File, Folder} from '../../os/fs.models';
+import {File, FileHolder, Folder} from '../../os/fs.models';
 import {CSSDimension, Position, Size} from '../css.models';
+import {KeyValuePipe} from '@angular/common';
 
 
 @Component({
@@ -24,16 +25,17 @@ export class DesktopComponent extends WindowComponent {
   readonly minSize = this.maxSize;
   size: Size;
 
-  private desktop: { [p: string]: File };
+  private desktop: FileHolder<File>[];
 
-  constructor(private fs: FsService) {
+  constructor(private fs: FsService, kvPipe: KeyValuePipe) {
     super();
     this.size = this.maxSize;
 
     try {
       const desktop = fs.resolve('/home/root/Desktop');
       if (desktop instanceof Folder) {
-        this.desktop = desktop.files;
+        const kvMap = kvPipe.transform(desktop.files);
+        this.desktop = kvMap.map((kv) => new FileHolder<File>(kv.key, kv.value));
       }
     } catch (e) {
       console.error('No Such File', e);

@@ -21,7 +21,7 @@ import {WindowControllerService} from './window-controller.service';
 import {BehaviorSubject} from 'rxjs';
 import {ResizeEvent} from 'angular-resizable-element';
 import {ResizeCursors} from 'angular-resizable-element/resizable.directive';
-import {File} from '../os/fs.models';
+import {File, FileHolder} from '../os/fs.models';
 import {CSSDimension, Position, Size} from '../windows/css.models';
 
 @Component({
@@ -124,7 +124,9 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
       window = this.windows.find((_window) => _window.id === window);
     }
 
+    window.window.instance.close();
     window.window.destroy();
+
     // @ts-ignore fixme: Type checking does not work here (see https://gist.github.com/EnzDev/6d1cdd5af265e5ff8094d6961a3a5434)
     this.windows.splice(this.windows.findIndex((_window) => _window.id === window.id), 1);
   }
@@ -141,7 +143,7 @@ export class WindowManagerComponent implements AfterViewInit, OnDestroy {
    * @param type: the Window to instantiate
    * @param fileInjector: A file that can be injected into a WindowComponentWithFile
    */
-  private createInstance(type: Type<WindowComponent | WindowComponentWithFile>, fileInjector ?: File): number {
+  private createInstance(type: Type<WindowComponent | WindowComponentWithFile>, fileInjector ?: FileHolder<File>): number {
     const factory = this.componentFactoryResolver.resolveComponentFactory(type);
     const id = this.generateId;
 

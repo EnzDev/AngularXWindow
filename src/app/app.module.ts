@@ -14,7 +14,9 @@ import {CvReaderComponent} from './windows/apps/cv-reader/cv-reader.component';
 import {HttpClientModule} from '@angular/common/http';
 import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
 import {ResizableModule} from 'angular-resizable-element';
-import {APP_BASE_HREF, PlatformLocation} from '@angular/common';
+import {APP_BASE_HREF, KeyValuePipe, PlatformLocation} from '@angular/common';
+import {TextReaderComponent} from './windows/apps/text-reader/text-reader.component';
+import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 
 export function getBaseHref(platformLocation: PlatformLocation): string {
   return platformLocation.getBaseHrefFromDOM();
@@ -29,13 +31,16 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     WinHost,
     ClassicWindowComponent,
     IconComponent,
-    CvReaderComponent
+    CvReaderComponent,
+    TextReaderComponent
   ],
   imports: [
     ResizableModule,
     BrowserModule,
     HttpClientModule,
-    PdfJsViewerModule
+    PdfJsViewerModule,
+
+    CKEditorModule
   ],
   providers: [
     FsService,
@@ -44,8 +49,10 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
       provide: APP_BASE_HREF,
       useFactory: getBaseHref,
       deps: [PlatformLocation]
-    }],
+    },
+    KeyValuePipe
+  ],
   bootstrap: [AppComponent],
-  entryComponents: [DesktopComponent, TaskbarComponent, ClassicWindowComponent, CvReaderComponent]
+  entryComponents: [DesktopComponent, TaskbarComponent, ClassicWindowComponent, CvReaderComponent, TextReaderComponent]
 })
 export class AppModule { }

@@ -1,11 +1,17 @@
+$img_icon: 64px
+$icon_size: calc(#{$img_icon} + 3em)
+
 div
   display: inline-flex
   flex-direction: column
-  justify-content: center
+  justify-content: flex-start
   align-items: center
+  text-align: center
+  width: $icon_size
+  height: $icon_size
   img
-    height: 64px
-    width: 64px
+    height: $img_icon
+    width: $img_icon
     margin: 5px
   span
     margin: 1px

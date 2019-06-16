@@ -31,8 +31,8 @@ export class CvReaderComponent extends WindowComponentWithFile implements AfterV
 
   ngAfterViewInit(): void {
     this.input.subscribe(fileReady => {
-      if (fileReady instanceof PDFFile) {
-        this.pdfSrc = Location.joinWithSlash(this.baseHref, fileReady.sourceUrl);
+      if (fileReady.file instanceof PDFFile) {
+        this.pdfSrc = Location.joinWithSlash(this.baseHref, fileReady.file.sourceUrl);
       }
     });
   }

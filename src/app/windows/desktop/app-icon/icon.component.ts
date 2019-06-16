@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {WindowControllerService} from '../../../window-manager/window-controller.service';
 import {MimeService} from '../../../os/mime.service';
-import {App, File} from '../../../os/fs.models';
+import {App, File, FileHolder} from '../../../os/fs.models';
 
 @Component({
   selector: 'app-icon',
@@ -11,7 +11,7 @@ import {App, File} from '../../../os/fs.models';
 export class IconComponent implements OnInit {
 
   @Input()
-  public file: File;
+  public file: FileHolder<File>;
 
   @Input()
   private title: string;

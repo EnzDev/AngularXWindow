@@ -2,7 +2,7 @@
   [style.height]="size.height.get()"
   [style.width]="size.width.get()"
 >
-  <ng-container *ngFor="let file of desktop | keyvalue">
-    <app-icon [title]="file.key" [file]="file.value" src=""></app-icon>
+  <ng-container *ngFor="let file of desktop">
+    <app-icon [file]="file" [title]="file.name" src=""></app-icon>
   </ng-container>
 </div>
