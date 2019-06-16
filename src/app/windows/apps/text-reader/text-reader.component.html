@@ -1,0 +1,10 @@
+<!-- <p contenteditable="true" [formControl]="textEditor" >
+</p>
+ -->
+<div [style.height]="size.height.get()"
+     [style.width]="size.width.get()">
+  <ckeditor #ckeditor (change)="onChange($event)" *ngIf="configuration" [config]="configuration"
+            [editor]="textEditor"></ckeditor>
+</div>
+
+
