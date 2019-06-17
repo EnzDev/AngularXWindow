@@ -18,7 +18,7 @@ export class TextReaderComponent extends WindowComponentWithFile implements Afte
   size: Size = this.maxSize.copy();
   private holder: FileHolder<TextFile> = null;
   private textEditor = ClassicEditor;
-  private configuration: any = null;
+  public configuration: any = null;
   @ViewChild('ckeditor')
   private ckRef: ComponentRef<CKEditorComponent>;
 
